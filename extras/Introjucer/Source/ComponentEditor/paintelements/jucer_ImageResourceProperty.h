@@ -25,6 +25,7 @@
 #ifndef __JUCER_IMAGERESOURCEPROPERTY_JUCEHEADER__
 #define __JUCER_IMAGERESOURCEPROPERTY_JUCEHEADER__
 
+#include "../../Project Saving/jucer_ResourceFile.h"
 
 //==============================================================================
 /**
@@ -44,12 +45,7 @@ public:
           element (e), document (doc),
           allowChoiceOfNoResource (allowChoiceOfNoResource_)
     {
-        choices.add ("-- create a new image resource -- ");
-        choices.add (String::empty);
-        if (allowChoiceOfNoResource_)
-            choices.add ("<< none >>");
-        choices.addArray (doc.getResources().getResourceNames());
-
+        refreshChoices (allowChoiceOfNoResource_);
         doc.addChangeListener (this);
     }
 
@@ -59,13 +55,7 @@ public:
           element (e), document (*e->getDocument()),
           allowChoiceOfNoResource (allowChoiceOfNoResource_)
     {
-        choices.add ("-- create a new image resource -- ");
-        choices.add (String::empty);
-        if (allowChoiceOfNoResource_)
-            choices.add ("<< none >>");
-
-        choices.addArray (document.getResources().getResourceNames());
-
+        refreshChoices (allowChoiceOfNoResource_);
         document.addChangeListener (this);
     }
 
@@ -113,6 +103,27 @@ public:
     void changeListenerCallback (ChangeBroadcaster*)
     {
         refresh();
+    }
+    
+    void refreshChoices(bool allowChoiceOfNoResource_) {
+        choices.clear ();
+
+        choices.add ("-- create a new image resource -- ");
+        choices.add (String::empty);
+        if (allowChoiceOfNoResource_)
+            choices.add ("<< none >>");
+        
+        choices.addArray (document.getResources().getResourceNames());
+        
+        auto& cpp = document.getCppDocument();
+        if (auto project = cpp.getProject()) {
+            ResourceFile resourceFile (*project);
+            
+            for (int i = 0; i < resourceFile.getNumFiles(); ++i) {
+                auto& file = resourceFile.getFile(i);
+                choices.add (resourceFile.getClassName() + "::" + resourceFile.getDataVariableFor(file));
+            }
+        }
     }
 
 protected:

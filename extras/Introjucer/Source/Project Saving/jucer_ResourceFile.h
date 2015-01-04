@@ -46,6 +46,8 @@ public:
     String getSizeVariableFor (const File& file) const;
 
     int getNumFiles() const                 { return files.size(); }
+    const File& getFile(int i) const        { return files.getReference(i); }
+
     int64 getTotalDataSize() const;
 
     bool write (Array<File>& filesCreated, int maxFileSize);
