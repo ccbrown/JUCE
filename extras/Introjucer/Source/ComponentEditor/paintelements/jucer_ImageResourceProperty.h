@@ -121,9 +121,9 @@ public:
             
             for (int i = 0; i < resourceFile.getNumFiles(); ++i) {
                 auto& file = resourceFile.getFile(i);
-				if (ImageFileFormat::findImageFormatForFileExtension(file)) {
-					choices.add (resourceFile.getClassName() + "::" + resourceFile.getDataVariableFor(file));
-				}
+                if (ImageFileFormat::findImageFormatForFileExtension(file)) {
+                    choices.add (resourceFile.getClassName() + "::" + resourceFile.getDataVariableFor(file));
+                }
             }
         }
     }
